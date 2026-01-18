@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Interactive timeline of cognitive biases theoretical development from 1970s to present">
+    <title>Cognitive Biases: Theoretical Development Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        header p {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            opacity: 0.9;
+        }
+
+        .intro {
+            padding: 25px 20px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+        }
+
+        .intro p {
+            color: #555;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+        }
+
+        .timeline {
+            padding: 40px 15px;
+            position: relative;
+        }
+
+        /* Desktop: center line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            top: 0;
+        }
+
+        .era {
+            margin-bottom: 50px;
+        }
+
+        .era-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .era-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            border-left: none;
+            border-right: 4px solid #764ba2;
+        }
+
+        .timeline-content:active {
+            transform: scale(0.98);
+        }
+
+        .timeline-marker {
+            width: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .marker-dot {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(odd) .marker-dot {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.2);
+        }
+
+        .year {
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-size: clamp(0.95rem, 3vw, 1.15rem);
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .scholars {
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            color: #667eea;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .description {
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            color: #666;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .description.expanded {
+            display: block;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: clamp(0.7rem, 2vw, 0.8rem);
+            color: #555;
+        }
+
+        .indian-context {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            border-left: 3px solid #ff6b6b;
+            display: none;
+        }
+
+        .indian-context.expanded {
+            display: block;
+        }
+
+        .indian-context strong {
+            color: #d84315;
+            font-size: clamp(0.85rem, 2.5vw, 0.9rem);
+        }
+
+        .indian-context p {
+            margin-top: 6px;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: #666;
+        }
+
+        .expand-indicator {
+            text-align: center;
+            margin-top: 10px;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .research-opportunities {
+            background: #e8f5e9;
+            padding: 25px 20px;
+            margin: 40px 0;
+        }
+
+        .research-opportunities h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+        }
+
+        .research-opportunities ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .research-opportunities li {
+            padding: 10px 0;
+            border-bottom: 1px solid #c8e6c9;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #555;
+        }
+
+        .research-opportunities li:last-child {
+            border-bottom: none;
+        }
+
+        .research-opportunities li::before {
+            content: "💡 ";
+            margin-right: 8px;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            opacity: 0.9;
+        }
+
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 10px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            .intro {
+                padding: 20px 15px;
+            }
+
+            .timeline {
+                padding: 30px 10px;
+            }
+
+            /* Mobile: left-aligned timeline */
+            .timeline::before {
+                left: 20px;
+                transform: none;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(odd) {
+                flex-direction: row;
+                padding-left: 0;
+            }
+
+            .timeline-content {
+                width: calc(100% - 45px);
+                margin-left: 15px;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content {
+                border-right: none;
+                border-left: 4px solid #667eea;
+                margin-left: 15px;
+            }
+
+            .timeline-marker {
+                width: 30px;
+                flex-shrink: 0;
+            }
+
+            .marker-dot {
+                width: 16px;
+                height: 16px;
+                border-width: 3px;
+            }
+
+            .era {
+                margin-bottom: 35px;
+            }
+
+            .era-badge {
+                padding: 8px 20px;
+            }
+
+            .timeline-content {
+                padding: 15px;
+            }
+
+            .tags {
+                gap: 4px;
+            }
+
+            .tag {
+                padding: 3px 8px;
+            }
+
+            /* Better touch targets on mobile */
+            .timeline-content {
+                min-height: 44px; /* iOS minimum touch target */
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            header h1 {
+                font-size: 1.3rem;
+            }
+
+            .era-badge {
+                font-size: 0.95rem;
+                padding: 7px 15px;
+            }
+
+            .timeline-content {
+                padding: 12px;
+            }
+        }
+
+        /* Tablet landscape */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .timeline-content {
+                width: 44%;
+            }
+        }
+
+        /* Improve readability on large screens */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+
+            .timeline {
+                padding: 60px 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cognitive Biases in Financial Decision-Making</h1>
+            <p>Theoretical Development Timeline: 1970s to Present</p>
+        </header>
+
+        <div class="intro">
+            <h2>From Rational Models to Behavioral Economics</h2>
+            <p>This timeline traces the evolution of our understanding of cognitive biases in financial decision-making, from Kahneman and Tversky's pioneering work to contemporary applications in Indian financial markets.</p>
+        </div>
+
+        <div class="timeline">
+            <!-- FOUNDATION ERA: 1970s-1980s -->
+            <div class="era">
+                <div class="era-header">
+                    <span class="era-badge">Foundation Era: 1970s-1980s</span>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1974</div>
+                        <div class="event-title">Heuristics and Biases</div>
+                        <div class="scholars">Kahneman & Tversky</div>
+                        <div class="tags">
+                            <span class="tag">Anchoring</span>
+                            <span class="tag">Availability</span>
+                            <span class="tag">Representativeness</span>
+                        </div>
+                        <div class="description">
+                            Published seminal paper in <em>Science</em> demonstrating that people rely on heuristics (mental shortcuts) that lead to systematic biases. Introduced three key heuristics: anchoring (first number influences judgment), availability (recent events seem more likely), and representativeness (judging probability by similarity to stereotypes).
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Anchoring visible in IPO pricing—investors influenced by listing price ranges. Availability bias drives post-scam market reactions (e.g., Satyam aftermath).</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1979</div>
+                        <div class="event-title">Prospect Theory</div>
+                        <div class="scholars">Kahneman & Tversky</div>
+                        <div class="tags">
+                            <span class="tag">Loss Aversion</span>
+                            <span class="tag">Reference Dependence</span>
+                            <span class="tag">Nobel-Winning</span>
+                        </div>
+                        <div class="description">
+                            Revolutionary theory showing that people value losses and gains differently—losses hurt approximately 2.5 times more than equivalent gains feel good. Introduced the value function (S-shaped curve) and probability weighting. This challenged Expected Utility Theory and laid foundation for behavioral economics.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Explains disposition effect in NSE—investors hold losing stocks (Jet Airways, Yes Bank) too long while selling winners too early. Loss aversion drives fixed deposit preference despite inflation erosion.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1980</div>
+                        <div class="event-title">Mental Accounting</div>
+                        <div class="scholars">Richard Thaler</div>
+                        <div class="tags">
+                            <span class="tag">Framing</span>
+                            <span class="tag">Transaction Utility</span>
+                        </div>
+                        <div class="description">
+                            Introduced concept of mental accounting—people categorize money into different mental "buckets" (salary vs. bonus, savings vs. windfall) and treat them differently despite money being fungible. This explains why people simultaneously save money at low interest rates while carrying high-interest credit card debt.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Diwali bonuses often spent frivolously (consumption mental account) while regular salary is saved. Festival season spending patterns demonstrate non-fungibility of money in Indian households.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1985</div>
+                        <div class="event-title">Overreaction Hypothesis</div>
+                        <div class="scholars">De Bondt & Thaler</div>
+                        <div class="tags">
+                            <span class="tag">Market Inefficiency</span>
+                            <span class="tag">Contrarian Strategy</span>
+                        </div>
+                        <div class="description">
+                            Demonstrated that stock markets systematically overreact to dramatic news (both good and bad), leading to predictable reversals. Past "losers" outperform past "winners" over 3-5 year horizons, contradicting efficient market hypothesis. This opened door for behavioral explanations of market anomalies.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Visible in tech stock bubble (2000) and subsequent crash. Reliance Industries post-demerger overreactions. Value investing opportunities in post-scandal stocks.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPANSION ERA: 1990s-2000s -->
+            <div class="era">
+                <div class="era-header">
+                    <span class="era-badge">Expansion Era: 1990s-2000s</span>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1991</div>
+                        <div class="event-title">Myopic Loss Aversion</div>
+                        <div class="scholars">Benartzi & Thaler</div>
+                        <div class="tags">
+                            <span class="tag">Equity Premium Puzzle</span>
+                            <span class="tag">Investment Horizon</span>
+                        </div>
+                        <div class="description">
+                            Explained why stocks command high returns (equity premium puzzle): loss aversion + frequent evaluation = pain from short-term volatility. Investors who check portfolios daily experience more "losses" than those who check annually, even with identical returns. This discourages equity investment despite superior long-term returns.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Explains India's low equity market participation (~2-3% population) despite high returns. Zerodha/Groww apps' daily notifications may increase myopic loss aversion. SIPs work by reducing evaluation frequency.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1992</div>
+                        <div class="event-title">Information Cascades</div>
+                        <div class="scholars">Abhijit Banerjee</div>
+                        <div class="tags">
+                            <span class="tag">Herding</span>
+                            <span class="tag">Social Learning</span>
+                            <span class="tag">Nobel 2019</span>
+                        </div>
+                        <div class="description">
+                            Mathematical model showing how rational individuals create irrational group outcomes. When people observe others' actions and ignore their own private information, cascades form. These are fragile—small shocks can reverse entire cascades. Explains bank runs, market bubbles, and fashion trends.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Yes Bank withdrawal panic (2020)—rational individuals created bank run. IPO oversubscription cascades (Zomato, Paytm). Cryptocurrency boom driven by social media cascades.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">1998</div>
+                        <div class="event-title">Do Investors Trade Too Much?</div>
+                        <div class="scholars">Terrance Odean</div>
+                        <div class="tags">
+                            <span class="tag">Overconfidence</span>
+                            <span class="tag">Trading Volume</span>
+                        </div>
+                        <div class="description">
+                            Analyzed 10,000 brokerage accounts showing excessive trading reduces returns by ~4% annually due to transaction costs and poor timing. Men trade 45% more than women and have correspondingly lower returns. Overconfidence (illusion of knowledge and control) drives excessive trading despite evidence that passive strategies outperform.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Visible in F&O segment growth—retail traders losing money systematically. COVID-19 day trading boom led to record losses. Zerodha's "nudge" reminders: 89% of traders lose money.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2001</div>
+                        <div class="event-title">Save More Tomorrow (SMarT)</div>
+                        <div class="scholars">Thaler & Benartzi</div>
+                        <div class="tags">
+                            <span class="tag">Applied Behavioral Economics</span>
+                            <span class="tag">Policy Design</span>
+                        </div>
+                        <div class="description">
+                            Practical application of behavioral insights: employees commit to increase savings from FUTURE raises (not current income). Avoids loss aversion pain. Increased savings rates from 3.5% to 13.6% over 40 months. Demonstrated that understanding biases enables better policy design without mandates or financial incentives.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Potential application to EPF/NPS auto-escalation. Could address India's low retirement savings rate. SEBI investor education programs could adopt pre-commitment mechanisms.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2008</div>
+                        <div class="event-title">Predictably Irrational & Nudge</div>
+                        <div class="scholars">Dan Ariely | Thaler & Sunstein</div>
+                        <div class="tags">
+                            <span class="tag">Popular Science</span>
+                            <span class="tag">Choice Architecture</span>
+                        </div>
+                        <div class="description">
+                            Two bestsellers brought behavioral economics to mainstream. Ariely's experiments demonstrated systematic irrationality in everyday decisions. Thaler & Sunstein's "Nudge" showed how choice architecture shapes decisions without restricting freedom—default options, simplification, and feedback change behavior at scale.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Influenced SEBI's behavioral insights unit. Jan Dhan Yojana's opt-out insurance scheme used nudge principles. Aadhaar-based pension enrollment reduced friction using behavioral design.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTEMPORARY ERA: 2010s-Present -->
+            <div class="era">
+                <div class="era-header">
+                    <span class="era-badge">Contemporary Era: 2010s-Present</span>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2011</div>
+                        <div class="event-title">Thinking, Fast and Slow</div>
+                        <div class="scholars">Daniel Kahneman</div>
+                        <div class="tags">
+                            <span class="tag">System 1 & 2</span>
+                            <span class="tag">Synthesis</span>
+                        </div>
+                        <div class="description">
+                            Magnum opus synthesizing 40 years of research into accessible framework. System 1 (fast, intuitive, emotional) vs. System 2 (slow, deliberate, logical). Most financial decisions use System 1 by default, leading to biases. System 2 is "lazy" and only engaged when necessary. Understanding this duality is key to debiasing.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>System 1 drives festival season impulse spending. Insurance buying decisions often System 1 (agent pressure) vs. System 2 (needs analysis). SIP investments work by making System 1 do the right thing automatically.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2015</div>
+                        <div class="event-title">Misbehaving: The Making of Behavioral Economics</div>
+                        <div class="scholars">Richard Thaler</div>
+                        <div class="tags">
+                            <span class="tag">Historical Account</span>
+                            <span class="tag">Academic Battle</span>
+                        </div>
+                        <div class="description">
+                            Insider account of behavioral economics' journey from fringe idea to mainstream acceptance. Chronicled resistance from rational choice theorists and gradual paradigm shift. Emphasized that "Humans" are not "Econs"—we're predictably irrational, not randomly irrational. This distinction matters for policy and business.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Parallels RBI's shift from assuming rational actors to behavioral regulation (circuit breakers, cooling periods). Indian academia slow to adopt behavioral finance in curriculum—research opportunity.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2017</div>
+                        <div class="event-title">Thaler Wins Nobel Prize</div>
+                        <div class="scholars">Richard Thaler</div>
+                        <div class="tags">
+                            <span class="tag">Recognition</span>
+                            <span class="tag">Mainstream Acceptance</span>
+                        </div>
+                        <div class="description">
+                            Nobel Prize in Economics awarded for contributions to behavioral economics. Citation emphasized work on limited rationality, social preferences, and lack of self-control. Recognized that incorporating realistic psychological assumptions improves economic analysis and policy. Validated decades of challenging rational actor orthodoxy.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Following Banerjee-Duflo-Kremer Nobel (2019), Indian academia gained confidence in behavioral approaches. SEBI, RBI increasingly use behavioral insights. Growing research on Indian market anomalies through behavioral lens.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2020-21</div>
+                        <div class="event-title">COVID-19 Pandemic: Natural Experiment</div>
+                        <div class="scholars">Global Research Community</div>
+                        <div class="tags">
+                            <span class="tag">Crisis Behavior</span>
+                            <span class="tag">Digital Acceleration</span>
+                        </div>
+                        <div class="description">
+                            Unprecedented natural experiment in financial behavior. March 2020 panic selling demonstrated emotional decision-making at scale. Followed by retail trading boom—Robinhood in US, Zerodha/Groww in India. Meme stock phenomenon (GameStop) showed social media amplifying herding. Crypto surge combined FOMO, recency bias, and availability heuristic.
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>14+ million new demat accounts in India (2020-21). Yes Bank withdrawal panic despite RBI backing. Record F&O losses among retail traders. Cryptocurrency adoption surge driven by social cascades. Rich data for behavioral research.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" onclick="toggleDetails(this)">
+                    <div class="timeline-marker">
+                        <div class="marker-dot"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="year">2024</div>
+                        <div class="event-title">AI & Robo-Advisors Era</div>
+                        <div class="scholars">Emerging Field</div>
+                        <div class="tags">
+                            <span class="tag">Algorithm Aversion</span>
+                            <span class="tag">New Biases</span>
+                        </div>
+                        <div class="description">
+                            Robo-advisors promise to remove human biases through algorithmic investing. However, research shows "algorithm aversion"—people distrust algorithms even when they outperform humans. New biases emerge: over-reliance on AI recommendations, failure to question algorithmic outputs. Question remains: can we use AI to debias decisions, or do we just create new biases?
+                        </div>
+                        <div class="indian-context">
+                            <strong>🇮🇳 Indian Context:</strong>
+                            <p>Growth of apps like Paytm Money, ET Money offering robo-advisory. Indian investors show high algorithm aversion vs. human advisors. Research opportunity: AI adoption patterns in collectivist culture. SEBI exploring AI-driven investor protection.</p>
+                        </div>
+                        <div class="expand-indicator">👆 Tap to expand</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESEARCH OPPORTUNITIES -->
+            <div class="research-opportunities">
+                <h3>Research Opportunities in Indian Context</h3>
+                <ul>
+                    <li>Cultural variations in loss aversion: Does Indian collectivism amplify or reduce loss aversion compared to Western individualism?</li>
+                    <li>Digital payment biases: How do UPI and digital wallets affect mental accounting and spending behavior?</li>
+                    <li>Gender and financial decision-making: Indian women show different investment patterns—overconfidence gap, risk tolerance differences</li>
+                    <li>Herding in IPO markets: Systematic study of cascade formation in Indian IPO oversubscriptions (Zomato, Nykaa, Paytm)</li>
+                    <li>Demonetization natural experiment: How did sudden cash withdrawal affect mental accounting and spending patterns?</li>
+                    <li>Religious festivals and consumption: Mental accounting around Diwali, Eid, Christmas spending vs. regular months</li>
+                    <li>Crypto adoption in India: Social cascade analysis, FOMO measurement, regulatory impact on bias activation</li>
+                    <li>Financial literacy interventions: Which debiasing strategies work in Indian educational context?</li>
+                    <li>Nudge design for retirement savings: Optimal defaults for EPF, NPS in Indian workplace settings</li>
+                    <li>Algorithm aversion in robo-advisory: Cross-cultural comparison of AI trust in financial decisions</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>Created for Faculty Development Workshop | Cognitive Biases in Financial Decision-Making</p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.8;">Tap any timeline item to expand details and Indian context examples</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleDetails(element) {
+            const description = element.querySelector('.description');
+            const indianContext = element.querySelector('.indian-context');
+            const indicator = element.querySelector('.expand-indicator');
+            
+            if (description.classList.contains('expanded')) {
+                // Collapse
+                description.classList.remove('expanded');
+                indianContext.classList.remove('expanded');
+                indicator.textContent = '👆 Tap to expand';
+                indicator.style.color = '#667eea';
+            } else {
+                // Expand
+                description.classList.add('expanded');
+                indianContext.classList.add('expanded');
+                indicator.textContent = '👆 Tap to collapse';
+                indicator.style.color = '#ff6b6b';
+            }
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Prevent zoom on double-tap for iOS
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
